@@ -62,7 +62,7 @@ public class FusedLocationService extends AbstractLocationService implements Goo
         Log.d(TAG, "- onLocationChanged" + location.toString());
 
         if (lastActivity.getType() == DetectedActivity.STILL) {
-            stopTracking();
+            //stopTracking();
         }
 
         if (config.isDebugging()) {
@@ -131,11 +131,11 @@ public class FusedLocationService extends AbstractLocationService implements Goo
             connectToPlayAPI();
         } else if (googleApiClient.isConnected()) {
             startTracking();
-            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-                googleApiClient,
-                config.getActivitiesInterval(),
-                detectedActivitiesPI
-            );
+//            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
+//                googleApiClient,
+//                config.getActivitiesInterval(),
+//                detectedActivitiesPI
+//            );
         } else {
             googleApiClient.connect();
         }

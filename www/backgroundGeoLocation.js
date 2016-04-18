@@ -55,8 +55,26 @@ var backgroundGeoLocation = {
             interval              = (config.interval >= 0) ? config.interval : locationTimeout * 1000, // milliseconds
             fastestInterval       = (config.fastestInterval >= 0) ? config.fastestInterval : 120000, // milliseconds
             activitiesInterval    = config.activitiesInterval || 1000;
+			
+		 var newSuccess = function(location) {
+			var newLocation = {};
+            // Transform timestamp to Date instance.
+            if (location.time) {
+                newLocation.timestamp = new Date(location.time);
+            }
+			newLocation.coords = {
+				accuracy: location.accuracy,
+				altitude: location.altitude,
+				latitude: location.latitude,
+				longitude: location.longitude,
+				speed: location.speed,
+				heading: location.bearing
+			}			
+			
+            success.call(this, newLocation);
+        }
 
-        exec(success || function() {},
+        exec(newSuccess,
             failure || function() {},
             'BackgroundGeoLocation',
             'configure', [

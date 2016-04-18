@@ -76,7 +76,10 @@ public class FusedLocationService extends AbstractLocationService implements Goo
         if (config.isDebugging()) {
             startTone("beep");
         }
-
+        boolean isMoving = this.isMoving();
+        Bundle locationExtras = new Bundle();
+        locationExtras.putBoolean("isMoving", isMoving);
+        location.setExtras(locationExtras);
         lastLocation = location;
         handleLocation(location);
     }
@@ -131,11 +134,11 @@ public class FusedLocationService extends AbstractLocationService implements Goo
             connectToPlayAPI();
         } else if (googleApiClient.isConnected()) {
             startTracking();
-//            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-//                googleApiClient,
-//                config.getActivitiesInterval(),
-//                detectedActivitiesPI
-//            );
+            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
+                googleApiClient,
+                config.getActivitiesInterval(),
+                detectedActivitiesPI
+            );
         } else {
             googleApiClient.connect();
         }
@@ -268,6 +271,13 @@ public class FusedLocationService extends AbstractLocationService implements Goo
             //else do nothing
         }
     };
+
+    private boolean isMoving() {
+        if(lastActivity == null)
+            return false;
+
+        return lastActivity.getType() != DetectedActivity.STILL && lastActivity.getType() != DetectedActivity.STILL;
+    }
 
     protected void cleanUp() {
         stopRecording();

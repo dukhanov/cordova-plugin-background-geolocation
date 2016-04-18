@@ -1,6 +1,8 @@
 package com.tenforwardconsulting.cordova.bgloc.data;
 
 import android.location.Location;
+import android.os.Bundle;
+
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -92,6 +94,15 @@ public class LocationProxy {
         this.debug = debug;
     }
 
+    public boolean isMoving(){
+        Bundle bundle = location.getExtras();
+        if(bundle != null){
+            return bundle.getBoolean("isMoving", false);
+        }
+
+        return false;
+    }
+
     public String getProvider() {
         return location.getProvider();
     }
@@ -128,6 +139,7 @@ public class LocationProxy {
         json.put("bearing", getBearing());
         json.put("serviceProvider", getServiceProvider());
         json.put("debug", getDebug());
+        json.put("isMoving", isMoving());
 
         return json;
   	}

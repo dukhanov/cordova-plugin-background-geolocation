@@ -276,7 +276,7 @@ public class FusedLocationService extends AbstractLocationService implements Goo
         if(lastActivity == null)
             return false;
 
-        return lastActivity.getType() != DetectedActivity.STILL && lastActivity.getType() != DetectedActivity.STILL;
+        return lastActivity.getType() != DetectedActivity.STILL && lastActivity.getType() != DetectedActivity.UNKNOWN;
     }
 
     protected void cleanUp() {

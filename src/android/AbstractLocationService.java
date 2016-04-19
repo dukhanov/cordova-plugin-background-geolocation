@@ -13,6 +13,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.AlarmManager;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.NotificationCompat;
 import android.app.Service;
 import android.app.PendingIntent;
@@ -89,32 +91,33 @@ public abstract class AbstractLocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Received start id " + startId + ": " + intent);
         if (intent != null) {
-            // config = Config.fromByteArray(intent.getByteArrayExtra("config"));
-            config = (Config) intent.getParcelableExtra("config");
+            config = intent.getParcelableExtra("config");
             Log.i(TAG, "Config: " + config.toString());
 
             // Build a Notification required for running service in foreground.
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setContentTitle(config.getNotificationTitle());
-            builder.setContentText(config.getNotificationText());
-            builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
-            if (config.getNotificationIcon() != null) {
-                builder.setSmallIcon(getPluginResource(config.getSmallNotificationIcon()));
-                builder.setLargeIcon(BitmapFactory.decodeResource(getApplication().getResources(), getPluginResource(config.getLargeNotificationIcon())));
-            }
-            if (config.getNotificationIconColor() != null) {
-                builder.setColor(this.parseNotificationIconColor(config.getNotificationIconColor()));
-            }
+            Notification notification = getNotification(config);
 
-            setClickEvent(builder);
-
-            Notification notification = builder.build();
-            notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_FOREGROUND_SERVICE | Notification.FLAG_NO_CLEAR;
             startForeground(startId, notification);
         }
 
         //We want this service to continue running until it is explicitly stopped
         return START_REDELIVER_INTENT;
+    }
+
+    private Notification getNotification(Config config) {
+        Context context = getApplicationContext();
+        PackageManager pm = getPackageManager();
+        ApplicationInfo info = context.getApplicationInfo();
+
+        Intent launchIntent = pm.getLaunchIntentForPackage(context.getPackageName());
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent,  PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setContentIntent(pendingIntent)
+                .setContentTitle(config.getNotificationTitle())
+                .setContentText(config.getNotificationText())
+                .setSmallIcon(info.icon);
+
+        return builder.build();
     }
 
     public Integer getPluginResource(String resourceName) {

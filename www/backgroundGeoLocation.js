@@ -38,23 +38,7 @@ var backgroundGeoLocation = {
     config: {},
 
     configure: function(success, failure, config) {
-        this.config = config || {};
-        var stationaryRadius      = (config.stationaryRadius >= 0) ? config.stationaryRadius : 50, // meters
-            distanceFilter        = (config.distanceFilter >= 0) ? config.distanceFilter   : 500, // meters
-            locationTimeout       = (config.locationTimeout >= 0) ? config.locationTimeout  : 60, // seconds
-            desiredAccuracy       = (config.desiredAccuracy >= 0) ? config.desiredAccuracy  : this.accuracy.MEDIUM,
-            debug                 = config.debug || false,
-            notificationTitle     = config.notificationTitle || 'Background tracking',
-            notificationText      = config.notificationText || 'ENABLED',
-            notificationIcon      = config.notificationIcon,
-            notificationIconColor = config.notificationIconColor,
-            activityType          = config.activityType || 'OTHER',
-            stopOnTerminate       = config.stopOnTerminate || false,
-            locationService       = config.locationService || this.service.ANDROID_DISTANCE_FILTER,
-            //Android FusedLocation config
-            interval              = (config.interval >= 0) ? config.interval : locationTimeout * 1000, // milliseconds
-            fastestInterval       = (config.fastestInterval >= 0) ? config.fastestInterval : 120000, // milliseconds
-            activitiesInterval    = config.activitiesInterval || 1000;
+        this.config = this._getConfig(config);
 			
 		 var newSuccess = function(location) {
 			var newLocation = {};
@@ -79,23 +63,7 @@ var backgroundGeoLocation = {
         exec(newSuccess,
             failure || function() {},
             'BackgroundGeoLocation',
-            'configure', [
-                stationaryRadius,
-                distanceFilter,
-                locationTimeout,
-                desiredAccuracy,
-                debug,
-                notificationTitle,
-                notificationText,
-                activityType,
-                stopOnTerminate,
-                notificationIcon,
-                notificationIconColor,
-                locationService,
-                interval,
-                fastestInterval,
-                activitiesInterval
-            ]
+            'configure', this.config
         );
     },
     start: function(success, failure) {
@@ -129,11 +97,11 @@ var backgroundGeoLocation = {
      * @param {Integer} timeout
      */
     setConfig: function(success, failure, config) {
-        this.apply(this.config, config);
+        this.config = this._getConfig(config)
         exec(success || function() {},
             failure || function() {},
             'BackgroundGeoLocation',
-            'setConfig', [config]);
+            'setConfig', this.config);
     },
     /**
      * Returns current stationaryLocation if available.  null if not
@@ -225,6 +193,42 @@ var backgroundGeoLocation = {
             }
         }
         return destination;
+    },
+    _getConfig: function(config) {
+        var stationaryRadius      = (config.stationaryRadius >= 0) ? config.stationaryRadius : 50, // meters
+            distanceFilter        = (config.distanceFilter >= 0) ? config.distanceFilter   : 500, // meters
+            locationTimeout       = (config.locationTimeout >= 0) ? config.locationTimeout  : 60, // seconds
+            desiredAccuracy       = (config.desiredAccuracy >= 0) ? config.desiredAccuracy  : this.accuracy.MEDIUM,
+            debug                 = config.debug || false,
+            notificationTitle     = config.notificationTitle || 'Background tracking',
+            notificationText      = config.notificationText || 'ENABLED',
+            notificationIcon      = config.notificationIcon,
+            notificationIconColor = config.notificationIconColor,
+            activityType          = config.activityType || 'OTHER',
+            stopOnTerminate       = config.stopOnTerminate || false,
+            locationService       = config.locationService || this.service.ANDROID_DISTANCE_FILTER,
+            //Android FusedLocation config
+            interval              = (config.interval >= 0) ? config.interval : locationTimeout * 1000, // milliseconds
+            fastestInterval       = (config.fastestInterval >= 0) ? config.fastestInterval : 120000, // milliseconds
+            activitiesInterval    = config.activitiesInterval || 1000;
+
+        return [
+               stationaryRadius,
+               distanceFilter,
+               locationTimeout,
+               desiredAccuracy,
+               debug,
+               notificationTitle,
+               notificationText,
+               activityType,
+               stopOnTerminate,
+               notificationIcon,
+               notificationIconColor,
+               locationService,
+               interval,
+               fastestInterval,
+               activitiesInterval
+           ]
     }
 };
 

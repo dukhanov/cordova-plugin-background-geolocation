@@ -149,9 +149,19 @@ public class BackgroundGeolocationPlugin extends CordovaPlugin {
 
             return true;
         } else if (ACTION_SET_CONFIG.equals(action)) {
-            // TODO reconfigure Service
-            callbackContext.success();
-            Log.d(TAG, "bg service reconfigured");
+            try {
+                stopBackgroundService();
+                unregisterActionReceiver();
+                unregisterLocationModeChangeReceiver();
+
+                this.config = Config.fromJSONArray(data);
+                startBackgroundService();
+                Log.d(TAG, "bg service reconfigured");
+
+                callbackContext.success();
+            }catch (JSONException e) {
+                callbackContext.error("Set config error: " + e.getMessage());
+            }
 
             return true;
         } else if (ACTION_LOCATION_ENABLED_CHECK.equals(action)) {

@@ -63,6 +63,7 @@ var backgroundGeoLocation = {
                 newLocation.timestamp = new Date(location.time);
             }
 			newLocation.isMoving = location.isMoving
+			newLocation.is_moving = location.isMoving
 			newLocation.coords = {
 				accuracy: location.accuracy,
 				altitude: location.altitude,

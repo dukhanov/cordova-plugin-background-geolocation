@@ -212,7 +212,6 @@ public class FusedLocationService extends AbstractLocationService implements Goo
 
         for(DetectedActivity da: detectedActivities) {
             if(da.getType() != DetectedActivity.TILTING || da.getType() != DetectedActivity.UNKNOWN) {
-                Log.w(TAG, "Received a Detected Activity that was not tilting / unknown");
                 if (highestConfidence < da.getConfidence()) {
                     highestConfidence = da.getConfidence();
                     mostLikelyActivity = da;
@@ -251,10 +250,12 @@ public class FusedLocationService extends AbstractLocationService implements Goo
             ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
             ArrayList<DetectedActivity> detectedActivities = (ArrayList) result.getProbableActivities();
 
-            //Find the activity with the highest percentage
+			Log.d(TAG, "LAST ACTIVITY: " + getActivityString(lastActivity.getType()) + " " + lastActivity.getConfidence());
+            
+			//Find the activity with the highest percentage
             lastActivity = getProbableActivity(detectedActivities);
 
-            Log.d(TAG, "MOST LIKELY ACTIVITY: " + getActivityString(lastActivity.getType()) + " " + lastActivity.getConfidence());
+            Log.d(TAG, "RECEIVED ACTIVITY: " + getActivityString(lastActivity.getType()) + " " + lastActivity.getConfidence());
 
             if (lastActivity.getType() == DetectedActivity.STILL) {
                 if (config.isDebugging()) {
@@ -268,7 +269,6 @@ public class FusedLocationService extends AbstractLocationService implements Goo
                 }
                 startTracking();
             }
-            //else do nothing
         }
     };
 

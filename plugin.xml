@@ -64,9 +64,8 @@
         <framework src="com.google.android.gms:play-services-location:+" />
         <framework src="com.android.support:support-v4:+" />
     </platform>
-
+<!-- 
     <platform name="ios">
-        <!-- required background modes:  App registers for location updates -->
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
             <string>This app requires background location tracking</string>
         </config-file>
@@ -88,7 +87,7 @@
         <source-file src="src/ios/CDVBackgroundGeoLocation.m" />
         <header-file src="src/ios/CDVBackgroundGeoLocation.h" />
      </platform>
-
+-->
 	<!-- wp8 -->
 	<platform name="wp8">
 		<config-file target="config.xml" parent="/*">

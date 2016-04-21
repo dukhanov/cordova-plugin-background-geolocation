@@ -150,12 +150,15 @@ public class BackgroundGeolocationPlugin extends CordovaPlugin {
             return true;
         } else if (ACTION_SET_CONFIG.equals(action)) {
             try {
-                stopBackgroundService();
-                unregisterActionReceiver();
-                unregisterLocationModeChangeReceiver();
-
                 this.config = Config.fromJSONArray(data);
-                startBackgroundService();
+
+                if(isEnabled) {
+                    stopBackgroundService();
+                    unregisterActionReceiver();
+                    unregisterLocationModeChangeReceiver();
+                    startBackgroundService();
+                }
+
                 Log.d(TAG, "bg service reconfigured");
 
                 callbackContext.success();
